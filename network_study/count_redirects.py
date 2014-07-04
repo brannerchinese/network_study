@@ -33,35 +33,35 @@ class Timeout():
     def raise_timeout(self, *args):
         raise Timeout.Timeout()
 
-def main(random=None):
-    """Choose random or semi-random domains and store HTTP headers received."""
-    if os.path.exists('domains_tried.txt'):
-        with open('domains_tried.txt', 'r') as f:
-            domains_tried = ast.literal_eval(f.read())
+def main(nonrandom=None):
+    """Choose random or semi-random IPs and store HTTP headers received."""
+    if os.path.exists('IPs_tried.txt'):
+        with open('IPs_tried.txt', 'r') as f:
+            IPs_tried = ast.literal_eval(f.read())
     else:
-        domains_tried = set()
-    if os.path.exists('domains_found.txt'):
-        with open('domains_found.txt', 'r') as f:
-            domains_found = ast.literal_eval(f.read())
+        IPs_tried = set()
+    if os.path.exists('IPs_found.txt'):
+        with open('IPs_found.txt', 'r') as f:
+            IPs_found = ast.literal_eval(f.read())
     else:
-        domains_found = {}
-    URL_heads = ['50.17', '50.19', '54.231', '69.53', '72.21', '74.125', 
+        IPs_found = {}
+    IP_heads = ['50.17', '50.19', '54.231', '69.53', '72.21', '74.125', 
             '98.137', '98.139', '98.158', '128.59', '192.0', '192.30', 
             '107.170', '190.93']
-    count_tried = len(domains_tried)
-    count_found = len(domains_found)
-    print('Found in tried-file: {} domains.'.format(count_tried))
-    print('Found in found-file: {} domains.'.format(count_found))
+    count_tried = len(IPs_tried)
+    count_found = len(IPs_found)
+    print('Found in tried-file: {} IPs.'.format(count_tried))
+    print('Found in found-file: {} IPs.'.format(count_found))
     while True:
-        if (len(domains_tried) != count_tried and
-                (len(domains_tried) - count_tried) % 250 == 0):
-            print('\n{} new domains tried since last save to disk.'.
-                    format(len(domains_tried) - count_tried))
-            write_domains_to_disk(domains_found, domains_tried)
-            count_tried = len(domains_tried)
+        if (len(IPs_tried) != count_tried and
+                (len(IPs_tried) - count_tried) % 250 == 0):
+            print('\n{} new IPs tried since last save to disk.'.
+                    format(len(IPs_tried) - count_tried))
+            write_IPs_to_disk(IPs_found, IPs_tried)
+            count_tried = len(IPs_tried)
         # Make random URL.
-        if random:
-            head = R.choice(URL_heads)
+        if nonrandom:
+            head = R.choice(IP_heads)
             url = 'http://' + head + ('.' +
                     str(R.randint(0, 255)) + '.' + str(R.randint(0, 255)))
         else:
@@ -73,20 +73,20 @@ def main(random=None):
                     parts[0] == '10' or 
                     parts[0] == '172' and 16 <= parts[1] <= 31):
                 continue
-            # Eliminate potentially sensitive or uninteresting domains.
+            # Eliminate potentially sensitive or uninteresting IPs.
             if (parts[0] in [6, 7, 10, 11, 214, 215] or 21 <= parts[0] <= 57):
                 continue
-        if url in domains_tried:
+        if url in IPs_tried:
             continue
-        domains_tried.add(url)
+        IPs_tried.add(url)
         try:
             with Timeout(2):
                 headers = H.get_responses(url)
         except KeyboardInterrupt:
             print()
-            domains_tried.discard(url)
-            print('Tried {} URLs before quitting.'.format(len(domains_tried)))
-            write_domains_to_disk(domains_found, domains_tried)
+            IPs_tried.discard(url)
+            print('Tried {} URLs before quitting.'.format(len(IPs_tried)))
+            write_IPs_to_disk(IPs_found, IPs_tried)
             sys.exit('KeyboardInterrupt detected; exiting.')
         except Timeout.Timeout:
             print('.', end='')
@@ -94,40 +94,40 @@ def main(random=None):
             continue
         except Exception as e:
             print('\n    {}'.format(e))
-            domains_tried.discard(url)
+            IPs_tried.discard(url)
             continue
         if headers:
             print('\nURL #{}: {}: {} items'.
-                    format(len(domains_tried), url, len(headers)))
-            domains_found[url] = headers
-            write_domains_to_disk(domains_found, domains_tried)
-            count_tried = len(domains_tried)
+                    format(len(IPs_tried), url, len(headers)))
+            IPs_found[url] = headers
+            write_IPs_to_disk(IPs_found, IPs_tried)
+            count_tried = len(IPs_tried)
 
-def write_domains_to_disk(domains_found, domains_tried):
-    with open('domains_found.txt', 'w') as f:
-        f.write(str(domains_found))
-        print('Wrote {} domains-found to disk.'.format(len(domains_found)))
-    with open('domains_tried.txt', 'w') as f:
-        f.write(str(domains_tried))
-        print('Wrote {} domains-tried to disk.'.format(len(domains_tried)))
+def write_IPs_to_disk(IPs_found, IPs_tried):
+    with open('IPs_found.txt', 'w') as f:
+        f.write(str(IPs_found))
+        print('Wrote {} IPs-found to disk.'.format(len(IPs_found)))
+    with open('IPs_tried.txt', 'w') as f:
+        f.write(str(IPs_tried))
+        print('Wrote {} IPs-tried to disk.'.format(len(IPs_tried)))
 
 def count():
-    """Return list_reverseiterator and domains for all HTTP headers received."""
-    if not os.path.exists('domains_found.txt'):
+    """Return list_reverseiterator and IPs for all HTTP headers received."""
+    if not os.path.exists('IPs_found.txt'):
         return
-    with open('domains_found.txt', 'r') as f:
-        domains_found = ast.literal_eval(f.read())
+    with open('IPs_found.txt', 'r') as f:
+        IPs_found = ast.literal_eval(f.read())
     x = reversed(sorted(
-        [(len(domains_found[i]), i) for i in domains_found]))
-    return x, domains_found
+        [(len(IPs_found[i]), i) for i in IPs_found]))
+    return x, IPs_found
 
 def list_headers():
     """Count examples of each header found."""
-    if not os.path.exists('domains_found.txt'):
+    if not os.path.exists('IPs_found.txt'):
         return
-    with open('domains_found.txt', 'r') as f:
-        domains_found = ast.literal_eval(f.read())
-    x = [k for i in domains_found for j in domains_found[i] for k in j]
+    with open('IPs_found.txt', 'r') as f:
+        IPs_found = ast.literal_eval(f.read())
+    x = [k for i in IPs_found for j in IPs_found[i] for k in j]
     return C.Counter(x)
 
 if __name__ == '__main__':
