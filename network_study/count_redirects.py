@@ -3,6 +3,8 @@
 # David Prager Branner
 # 20140704, works
 
+"""Make requests to randomly chosen sites; collect and study HTTP headers."""
+
 import sys
 import os
 import ast
@@ -56,6 +58,7 @@ def main(random=None):
             print('\n{} new domains tried since last save to disk.'.
                     format(len(domains_tried) - count_tried))
             write_domains_to_disk(domains_found, domains_tried)
+            count_tried = len(domains_tried)
         # Make random URL.
         if random:
             head = R.choice(URL_heads)
