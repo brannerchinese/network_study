@@ -55,7 +55,7 @@ def main(random=None):
                 (len(domains_tried) - count_tried) % 250 == 0):
             print('\n{} new domains tried since last routine save to disk.'.
                     format(len(domains_tried) - count_tried))
-            write_to_disk(domains_found, domains_tried)
+            write_domains_to_disk(domains_found, domains_tried)
             count_tried = len(domains_tried)
         # Make random URL.
         if random:
@@ -84,7 +84,7 @@ def main(random=None):
             print()
             domains_tried.discard(url)
             print('Tried {} URLs before quitting.'.format(len(domains_tried)))
-            write_to_disk(domains_found, domains_tried)
+            write_domains_to_disk(domains_found, domains_tried)
             sys.exit('KeyboardInterrupt detected; exiting.')
         except Timeout.Timeout:
             print('.', end='')
@@ -98,9 +98,9 @@ def main(random=None):
             print('\nURL #{}: {}: {} items'.
                     format(len(domains_tried), url, len(headers)))
             domains_found[url] = headers
-            write_to_disk(domains_found, domains_tried)
+            write_domains_to_disk(domains_found, domains_tried)
 
-def write_to_disk(domains_found, domains_tried):
+def write_domains_to_disk(domains_found, domains_tried):
     with open('domains_found.txt', 'w') as f:
         f.write(str(domains_found))
         print('Wrote {} domains-found to disk.'.format(len(domains_found)))
