@@ -77,7 +77,7 @@ def main(random=None):
                 headers = H.get_responses(url)
         except KeyboardInterrupt:
             print()
-            domains_tried.remove(url)
+            domains_tried.discard(url)
             print('Tried {} URLs before quitting.'.format(len(domains_tried)))
             write_to_disk(domains_found, domains_tried)
             sys.exit('KeyboardInterrupt detected; exiting.')
