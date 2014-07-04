@@ -13,6 +13,6 @@ Tools for play with HTTP requests and responses.
      This program also supplies a function `list_headers()` that counts the number of examples of each header saved to `IPs_found.txt` and reports them in order from most- to least-common.
 
  1. To do in future
-   2. Use `threading`? But perhaps `http.client` already uses some form of threading internally.
+   2. Use `threading` so as not to let time-outs be the bottleneck.
 
 [end]
