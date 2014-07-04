@@ -79,6 +79,7 @@ def main(random=None):
                 headers = H.get_responses(url)
         except KeyboardInterrupt:
             print()
+            domains_tried.remove(url)
             print('Tried {} URLs before quitting.'.format(len(domains_tried)))
             write_to_disk(domains_found, domains_tried)
             sys.exit('KeyboardInterrupt detected; exiting.')
@@ -99,10 +100,10 @@ def main(random=None):
 def write_to_disk(domains_found, domains_tried):
     with open('domains_found.txt', 'w') as f:
         f.write(str(domains_found))
-        print('Wrote {} to disk.'.format(len(domains_found)))
+        print('Wrote {} domains-found to disk.'.format(len(domains_found)))
     with open('domains_tried.txt', 'w') as f:
         f.write(str(domains_tried))
-        print('Wrote {} to disk.'.format(len(domains_tried)))
+        print('Wrote {} domains-tried to disk.'.format(len(domains_tried)))
 
 def count():
     """Return list_reverseiterator and domains for all HTTP headers received."""
