@@ -71,6 +71,8 @@ def main(random=None):
                 continue
         if url in domains_tried:
             continue
+        if (len(domains_tried) - count_tried) % 250 == 0:
+            write_to_disk(domains_found, domains_tried)
         domains_tried.add(url)
         try:
             with Timeout(2):
@@ -92,8 +94,6 @@ def main(random=None):
             print('\nURL #{}: {}: {} items'.
                     format(len(domains_tried), url, len(headers)))
             domains_found[url] = headers
-            write_to_disk(domains_found, domains_tried)
-        if (len(domains_tried) - count_tried) % 250 == 0:
             write_to_disk(domains_found, domains_tried)
 
 def write_to_disk(domains_found, domains_tried):
