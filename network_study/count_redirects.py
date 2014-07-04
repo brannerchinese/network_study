@@ -98,5 +98,15 @@ def main(heads=['50.17', '50.19', '54.231', '69.53', '72.21', '74.125', '98.137'
             with open('domains_found.txt', 'w') as f:
                 f.write(str(domains_found))
 
+def count():
+    """Return list_reverseiterator of HTTP headers received."""
+    if os.path.exists('domains_found.txt'):
+        with open('domains_found.txt', 'r') as f:
+            domains_found = ast.literal_eval(f.read())
+        x = reversed(sorted(
+                [(len(domains_found[i]), i) for i in domains_found]))
+    if x:
+        return x
+
 if __name__ == '__main__':
     main()
