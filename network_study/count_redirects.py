@@ -29,7 +29,7 @@ class Timeout():
     def raise_timeout(self, *args):
         raise Timeout.Timeout()
 
-def main(heads=['74.125', '128.59', '72.21', '54.231', '192.30', '98.137', '98.139', '98.158', '107.170', '190.93', '50.17']):
+def main(heads=['50.17', '50.19', '54.231', '69.53', '72.21', '74.125', '98.137', '98.139', '98.158', '128.59', '192.0', '192.30', '107.170', '190.93']):
     if os.path.exists('domains_tried.txt'):
         with open('domains_tried.txt', 'r') as f:
             domains_tried = ast.literal_eval(f.read())
