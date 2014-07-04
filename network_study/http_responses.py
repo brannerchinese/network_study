@@ -31,8 +31,8 @@ class NewHTTPConnection(http.client.HTTPConnection):
     response_class = NewHTTPResponse
 
 class NewHTTPHandler(urllib.request.HTTPHandler):
-    def http_open(self, req):
-        return self.do_open(NewHTTPConnection, req)
+    def http_open(self, request):
+        return self.do_open(NewHTTPConnection, request)
 
 def get_responses(url=None):
     if not url:
