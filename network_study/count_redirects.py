@@ -33,7 +33,7 @@ class Timeout():
     def raise_timeout(self, *args):
         raise Timeout.Timeout()
 
-def main(nonrandom=None):
+def main(nonrandom=None, seconds=2):
     """Choose random or semi-random IPs and store HTTP headers received."""
     if os.path.exists('IPs_tried.txt'):
         with open('IPs_tried.txt', 'r') as f:
@@ -59,33 +59,34 @@ def main(nonrandom=None):
                     format(len(IPs_tried) - count_tried))
             write_IPs_to_disk(IPs_found, IPs_tried)
             count_tried = len(IPs_tried)
-        # Make random URL.
+        # Make random IP-address.
         if nonrandom:
             head = R.choice(IP_heads)
-            url = 'http://' + head + ('.' +
+            IP_address = 'http://' + head + ('.' +
                     str(R.randint(0, 255)) + '.' + str(R.randint(0, 255)))
         else:
             parts = [R.randint(0, 223), R.randint(0, 255), 
                     R.randint(0, 255), R.randint(0, 255)]
-            url = 'http://' + '.'.join([str(i) for i in parts])
-            # Eliminate private IPv4 network ranges 192.168, 10, 172.16-31.
+            IP_address = 'http://' + '.'.join([str(i) for i in parts])
+            # Eliminate potentially sensitive or uninteresting IPs.
+            if (21 <= parts[0] <= 57 or parts[0] in [6, 7, 10, 11, 214, 215]):
+                continue
+            # Eliminate private IPv4 network ranges: 
+            #     192.168.0.0/16, 10.0.0.0/8, 172.16.0.0/12.
             if (parts[0:2] == [192, 168] or 
                     parts[0] == '10' or 
                     parts[0] == '172' and 16 <= parts[1] <= 31):
                 continue
-            # Eliminate potentially sensitive or uninteresting IPs.
-            if (parts[0] in [6, 7, 10, 11, 214, 215] or 21 <= parts[0] <= 57):
-                continue
-        if url in IPs_tried:
+        if IP_address in IPs_tried:
             continue
-        IPs_tried.add(url)
+        IPs_tried.add(IP_address)
         try:
-            with Timeout(2):
-                headers = H.get_responses(url)
+            with Timeout(seconds):
+                headers = H.get_responses(IP_address)
         except KeyboardInterrupt:
             print()
-            IPs_tried.discard(url)
-            print('Tried {} URLs before quitting.'.format(len(IPs_tried)))
+            IPs_tried.discard(IP_address)
+            print('Tried {} IPs before quitting.'.format(len(IPs_tried)))
             write_IPs_to_disk(IPs_found, IPs_tried)
             sys.exit('KeyboardInterrupt detected; exiting.')
         except Timeout.Timeout:
@@ -94,12 +95,12 @@ def main(nonrandom=None):
             continue
         except Exception as e:
             print('\n    {}'.format(e))
-            IPs_tried.discard(url)
+            IPs_tried.discard(IP_address)
             continue
         if headers:
-            print('\nURL #{}: {}: {} items'.
-                    format(len(IPs_tried), url, len(headers)))
-            IPs_found[url] = headers
+            print('\nIP #{}: {}: {} items'.
+                    format(len(IPs_tried), IP_address, len(headers)))
+            IPs_found[IP_address] = headers
             write_IPs_to_disk(IPs_found, IPs_tried)
             count_tried = len(IPs_tried)
 
