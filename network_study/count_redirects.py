@@ -14,6 +14,7 @@ import http_responses as H
 
 class Timeout():
     """Timeout class using SIGALRM signal."""
+    # From http://stackoverflow.com/a/8465202/621762
     class Timeout(Exception):
         pass
  
@@ -70,9 +71,7 @@ def main(random=None):
                     parts[0] == '172' and 16 <= parts[1] <= 31):
                 continue
             # Eliminate potentially sensitive or uninteresting domains.
-            if ((parts[0] in [6, 7, 10, 11, 214, 215] or
-                    21 <= parts[0] <= 57) and
-                    (parts[1] == 0 and parts[2] == 0 and 0 <= parts[3] <= 8)):
+            if (parts[0] in [6, 7, 10, 11, 214, 215] or 21 <= parts[0] <= 57):
                 continue
         if url in domains_tried:
             continue
