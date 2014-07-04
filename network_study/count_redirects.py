@@ -47,8 +47,10 @@ def main(random=None):
     URL_heads = ['50.17', '50.19', '54.231', '69.53', '72.21', '74.125', 
             '98.137', '98.139', '98.158', '128.59', '192.0', '192.30', 
             '107.170', '190.93']
-    count = len(domains_found)
-    print('Found in file: {} domains.'.format(count))
+    count_tried = len(domains_tried)
+    count_found = len(domains_found)
+    print('Found in tried-file: {} domains.'.format(count_tried))
+    print('Found in found-file: {} domains.'.format(count_found))
     while True:
         # Make random URL.
         if random:
@@ -78,7 +80,7 @@ def main(random=None):
         except KeyboardInterrupt:
             print()
             print('Tried {} URLs before quitting.'.format(len(domains_tried)))
-            write(domains_found)
+            write_to_disk(domains_found, domains_tried)
             sys.exit('KeyboardInterrupt detected; exiting.')
         except Timeout.Timeout:
             print('.', end='')
@@ -91,13 +93,16 @@ def main(random=None):
             print('\nURL #{}: {}: {} items'.
                     format(len(domains_tried), url, len(headers)))
             domains_found[url] = headers
-        if not (len(domains_found) - count) % 250:
-            print('Wrote {} to disk.'.format(len(domains_found)))
-            write(domains_found)
+        if (len(domains_tried) - count_tried) % 250 == 0:
+            write_to_disk(domains_found, domains_tried)
 
-def write(domains_found):
+def write_to_disk(domains_found, domains_tried):
     with open('domains_found.txt', 'w') as f:
         f.write(str(domains_found))
+        print('Wrote {} to disk.'.format(len(domains_found)))
+    with open('domains_tried.txt', 'w') as f:
+        f.write(str(domains_tried))
+        print('Wrote {} to disk.'.format(len(domains_tried)))
 
 def count():
     """Return list_reverseiterator and domains for all HTTP headers received."""
