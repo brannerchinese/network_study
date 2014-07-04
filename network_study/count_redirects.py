@@ -37,13 +37,11 @@ def main(random=None):
             domains_tried = ast.literal_eval(f.read())
     else:
         domains_tried = set()
-    print('Using as domains_tried:\n    {}\n'.format(domains_tried))
     if os.path.exists('domains_found.txt'):
         with open('domains_found.txt', 'r') as f:
             domains_found = ast.literal_eval(f.read())
     else:
         domains_found = {}
-    print('Using as domains_found:\n    {}\n'.format(domains_found))
     URL_heads = ['50.17', '50.19', '54.231', '69.53', '72.21', '74.125', 
             '98.137', '98.139', '98.158', '128.59', '192.0', '192.30', 
             '107.170', '190.93']
@@ -94,6 +92,7 @@ def main(random=None):
             print('\nURL #{}: {}: {} items'.
                     format(len(domains_tried), url, len(headers)))
             domains_found[url] = headers
+            write_to_disk(domains_found, domains_tried)
         if (len(domains_tried) - count_tried) % 250 == 0:
             write_to_disk(domains_found, domains_tried)
 
