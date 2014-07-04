@@ -50,8 +50,8 @@ def main(random=None):
     print('Found in tried-file: {} domains.'.format(count_tried))
     print('Found in found-file: {} domains.'.format(count_found))
     while True:
-        if (len(domains_tried) != count_tried) and
-                len(domains_tried) - count_tried) % 250) == 0):
+        if (len(domains_tried) != count_tried and
+                (len(domains_tried) - count_tried) % 250 == 0):
             write_to_disk(domains_found, domains_tried)
         # Make random URL.
         if random:
