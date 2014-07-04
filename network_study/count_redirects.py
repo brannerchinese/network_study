@@ -52,6 +52,8 @@ def main(random=None):
     while True:
         if (len(domains_tried) != count_tried and
                 (len(domains_tried) - count_tried) % 250 == 0):
+            print('\n{} new domains tried since last save to disk.'.
+                    format(len(domains_tried) - count_tried))
             write_to_disk(domains_found, domains_tried)
         # Make random URL.
         if random:
