@@ -42,4 +42,6 @@ def get_responses(url=None):
         x = opener.open(url)
     except urllib.error.URLError:
         return
-    return reporter.headers
+    headers = reporter.headers
+    reporter.headers = []
+    return headers
