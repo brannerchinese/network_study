@@ -71,7 +71,8 @@ def main(random=None):
                 continue
         if url in domains_tried:
             continue
-        if (len(domains_tried) - count_tried) % 250 == 0:
+        if (len(domains_tried) - count_tried != 0 and 
+                (len(domains_tried) - count_tried) % 250) == 0:
             write_to_disk(domains_found, domains_tried)
         domains_tried.add(url)
         try:
