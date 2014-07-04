@@ -53,9 +53,10 @@ def main(random=None):
     while True:
         if (len(domains_tried) != count_tried and
                 (len(domains_tried) - count_tried) % 250 == 0):
-            print('\n{} new domains tried since last save to disk.'.
+            print('\n{} new domains tried since last routine save to disk.'.
                     format(len(domains_tried) - count_tried))
             write_to_disk(domains_found, domains_tried)
+            count_tried = len(domains_tried)
         # Make random URL.
         if random:
             head = R.choice(URL_heads)
@@ -91,6 +92,7 @@ def main(random=None):
             continue
         except Exception as e:
             print('\n    {}'.format(e))
+            domains_tried.discard(url)
             continue
         if headers:
             print('\nURL #{}: {}: {} items'.
