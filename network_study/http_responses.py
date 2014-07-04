@@ -17,8 +17,10 @@ reporter = Reporter()
 
 class NewHTTPResponse(http.client.HTTPResponse):
     def _read_status(self):
+        # Read but then restore file-pointer "self.fp".
         s = self.fp.read()
         self.fp = io.BytesIO(s)
+        # Prepare headers to be stored.
         headers = s.decode().split('\r\n\r\n')[0].split('\r\n')
         headers = [i.split(':') for i in headers]
         reporter.headers.append(
