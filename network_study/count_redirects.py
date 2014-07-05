@@ -40,16 +40,16 @@ def main(nonrandom=None, seconds=2):
             IPs_tried = ast.literal_eval(f.read())
     else:
         IPs_tried = set()
-    if os.path.exists('IPs_found.txt'):
-        with open('IPs_found.txt', 'r') as f:
-            IPs_found = ast.literal_eval(f.read())
+    if os.path.exists('responses_found.txt'):
+        with open('responses_found.txt', 'r') as f:
+            responses_found = ast.literal_eval(f.read())
     else:
-        IPs_found = {}
+        responses_found = {}
     IP_heads = ['50.17', '50.19', '54.231', '69.53', '72.21', '74.125', 
             '98.137', '98.139', '98.158', '128.59', '192.0', '192.30', 
             '107.170', '190.93']
     count_tried = len(IPs_tried)
-    count_found = len(IPs_found)
+    count_found = len(responses_found)
     print('Found in tried-file: {} IPs.'.format(count_tried))
     print('Found in found-file: {} IPs.'.format(count_found))
     while True:
@@ -57,7 +57,7 @@ def main(nonrandom=None, seconds=2):
                 (len(IPs_tried) - count_tried) % 250 == 0):
             print('\n{} new IPs tried since last save to disk.'.
                     format(len(IPs_tried) - count_tried))
-            write_IPs_to_disk(IPs_found, IPs_tried)
+            write_IPs_to_disk(responses_found, IPs_tried)
             count_tried = len(IPs_tried)
         # Make random IP-address.
         if nonrandom:
@@ -87,7 +87,7 @@ def main(nonrandom=None, seconds=2):
             print()
             IPs_tried.discard(IP_address)
             print('Tried {} IPs before quitting.'.format(len(IPs_tried)))
-            write_IPs_to_disk(IPs_found, IPs_tried)
+            write_IPs_to_disk(responses_found, IPs_tried)
             sys.exit('KeyboardInterrupt detected; exiting.')
         except Timeout.Timeout:
             print('.', end='')
@@ -100,35 +100,35 @@ def main(nonrandom=None, seconds=2):
         if headers:
             print('\nIP #{}: {}: {} items'.
                     format(len(IPs_tried), IP_address, len(headers)))
-            IPs_found[IP_address] = headers
-            write_IPs_to_disk(IPs_found, IPs_tried)
+            responses_found[IP_address] = headers
+            write_IPs_to_disk(responses_found, IPs_tried)
             count_tried = len(IPs_tried)
 
-def write_IPs_to_disk(IPs_found, IPs_tried):
-    with open('IPs_found.txt', 'w') as f:
-        f.write(str(IPs_found))
-        print('Wrote {} IPs-found to disk.'.format(len(IPs_found)))
+def write_IPs_to_disk(responses_found, IPs_tried):
+    with open('responses_found.txt', 'w') as f:
+        f.write(str(responses_found))
+        print('Wrote {} IPs-found to disk.'.format(len(responses_found)))
     with open('IPs_tried.txt', 'w') as f:
         f.write(str(IPs_tried))
         print('Wrote {} IPs-tried to disk.'.format(len(IPs_tried)))
 
 def count():
     """Return list_reverseiterator and IPs for all HTTP headers received."""
-    if not os.path.exists('IPs_found.txt'):
+    if not os.path.exists('responses_found.txt'):
         return
-    with open('IPs_found.txt', 'r') as f:
-        IPs_found = ast.literal_eval(f.read())
+    with open('responses_found.txt', 'r') as f:
+        responses_found = ast.literal_eval(f.read())
     x = reversed(sorted(
-        [(len(IPs_found[i]), i) for i in IPs_found]))
-    return x, IPs_found
+        [(len(responses_found[i]), i) for i in responses_found]))
+    return x, responses_found
 
 def list_headers():
     """Count examples of each header found."""
-    if not os.path.exists('IPs_found.txt'):
+    if not os.path.exists('responses_found.txt'):
         return
-    with open('IPs_found.txt', 'r') as f:
-        IPs_found = ast.literal_eval(f.read())
-    x = [k for i in IPs_found for j in IPs_found[i] for k in j]
+    with open('responses_found.txt', 'r') as f:
+        responses_found = ast.literal_eval(f.read())
+    x = [k for i in responses_found for j in responses_found[i] for k in j]
     return C.Counter(x)
 
 if __name__ == '__main__':
