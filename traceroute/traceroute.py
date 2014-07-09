@@ -100,7 +100,7 @@ if __name__ == '__main__':
         try:
             max_time = int(sys.argv[2])
         except ValueError as e:
-            sys.exit('max_time must be an integer')
+            sys.exit('max_time must be an integer\n')
     sys.exit(main(dest_name=dest_name,
                 port=33434,
                 max_hops=64,
