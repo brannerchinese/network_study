@@ -76,7 +76,6 @@ def trace(dest_addr, port, max_hops, max_time):
         duration = round((time.time() - start_time) * 1000, 2)
         # Prevent cycles
         if curr_addr in IPs:
-            print('curr_addr in IPs')
             break
         else:
             IPs.add(curr_addr)
@@ -88,7 +87,6 @@ def trace(dest_addr, port, max_hops, max_time):
         ttl += 1
         if curr_addr == dest_addr or ttl > max_hops:
             break
-        print(IPs)
     return hops
 
 if __name__ == '__main__':
@@ -98,4 +96,4 @@ if __name__ == '__main__':
         sys.exit(main(dest_name=sys.argv[1],
                 port=33434,
                 max_hops=64,
-                max_time=4000000000))
+                max_time=30000))
