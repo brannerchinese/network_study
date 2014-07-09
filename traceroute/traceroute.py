@@ -99,7 +99,6 @@ if __name__ == '__main__':
     if len(sys.argv) == 3:
         try:
             max_time = int(sys.argv[2])
-            print(max_time)
         except ValueError as e:
             sys.exit('max_time must be an integer')
     sys.exit(main(dest_name=dest_name,
