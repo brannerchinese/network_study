@@ -90,10 +90,19 @@ def trace(dest_addr, port, max_hops, max_time):
     return hops
 
 if __name__ == '__main__':
-    if len(sys.argv) != 2:
-        sys.stderr.write('Usage: traceroute.py host\n')
+    if len(sys.argv) > 3:
+        sys.stderr.write('Usage: traceroute.py host [max_time (int)]\n')
+        sys.exit()
     else:
-        sys.exit(main(dest_name=sys.argv[1],
+        dest_name = sys.argv[1]
+    max_time = 30000
+    if len(sys.argv) == 3:
+        try:
+            max_time = int(sys.argv[2])
+            print(max_time)
+        except ValueError as e:
+            sys.exit('max_time must be an integer')
+    sys.exit(main(dest_name=dest_name,
                 port=33434,
                 max_hops=64,
-                max_time=30000))
+                max_time=max_time))
